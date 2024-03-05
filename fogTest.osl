@@ -1,0 +1,19 @@
+shader fogTest(
+    float maxHeight = -10,
+    float noiseScale = 0.001,
+
+    output color cout = 0,
+)
+{
+    color nTex = noise(P*noiseScale);
+
+    if(1-P[2]+nTex[0]*500 < maxHeight)
+    {
+        cout = 1;
+    }
+
+    
+
+    cout = cout;
+
+}

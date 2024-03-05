@@ -1,0 +1,8 @@
+shader UVW
+(
+    point uv = 0,
+    output point uvData = 0
+)
+{
+    uvData = uv;
+}

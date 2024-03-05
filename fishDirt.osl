@@ -1,0 +1,25 @@
+vector randomDir()
+{
+    return (0.001 * noise("perlin", P * 10000.0)) * 1000;
+}
+
+shader fishDirt(
+    float maxRayDist = 10,
+    float scale = 1,
+    float streakPower = 0.5,
+
+    output color dirtOut = 0,
+    output float outDebug = 0
+)
+{
+    vector rayDirection = (N * 0.1) + vector(0.0, 0.0, -1.0) + randomDir();
+
+    vector streakPos = vector(P[0]* scale, P[1]*scale, 0);
+    vector streakPosLarge = streakPos * 0.1;
+    float streakSmall = (((noise("usimplex", streakPos) - 0.5) * streakPower) + 0.5);
+    float streaksLarge = (((noise("usimplex", streakPosLarge) - 0.5) * streakPower * 2) + 0.5);
+
+    float rayDistance = maxRayDist * (streakSmall + streaksLarge);
+
+    dirtOut = trace(P, rayDirection, "maxdist", rayDistance) * 1-abs(dot(N, vector(0,0,-1)));
+}

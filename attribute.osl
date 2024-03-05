@@ -1,0 +1,6 @@
+shader attribute(output color bob = 0)
+{
+    point uv = 0;
+    getattribute("UV1", uv);
+    bob = uv;
+}

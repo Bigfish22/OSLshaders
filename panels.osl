@@ -1,0 +1,6 @@
+shader panels(
+    color cout = 0
+)
+{
+    cout = 1;
+}

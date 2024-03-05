@@ -1,0 +1,11 @@
+shader mask(
+    float currentHeight = 0,
+
+    output float mask = 0,
+)
+{
+    if(P[2] > currentHeight)
+    {
+        mask = 1;
+    }
+}

@@ -1,0 +1,178 @@
+//https://www.youtube.com/watch?v=-d8qT5-1LOI
+
+float cloudband(float bottom, float top, float fade)
+{
+	return smoothstep(bottom, bottom + fade, P[2]) * smoothstep(-top, -top + fade, -P[2]);
+}
+
+float remap(float value, float inputMin, float inputMax, float outputMin, float outputMax)
+{
+	return outputMin + (value - inputMin) * (outputMax - outputMin) / (inputMax - inputMin);
+}
+
+//borrowed from max uber noise
+float WorleyNoise(point pnt, float phase, int mode, float power, float jitter, output point closestpoint)
+{
+ 	
+	float  closestdist = 1000;
+	point  cellpnt = floor(pnt+0.5);		
+	vector offset  = pnt - cellpnt;
+
+	for (int x = -1; x <= 1; x++)		
+	{
+		for (int y = -1; y <= 1; y++)		
+		{
+			for (int z = -1; z <= 1; z++)		
+			{
+				point  base    = cellpnt + vector(x,y,z);	
+				float  distort = cellnoise(base, phase) - 0.5;
+
+				// Compute distance as vector
+				// and do different fun things to it 
+				// for different "modes"
+				vector dist = pnt - (base + distort * jitter); 
+				
+				float d = 0.0;
+				
+				// The default mode actually uses distance squared
+				// rather than distance, like classic Worlery. However,
+				// this actually look better - and if you really want
+				// the distance, setting the Power to 0.5 will effectively
+				// apply the square root to get the distance....
+				if (mode == 0) 
+				{
+					// Distance squared
+					d = dot(dist, dist);
+				}
+				// A few extra "modes" floating around the 
+				// open source community reproduced here
+				else if (mode == 1) // "Manhattan"
+				{
+					d = abs(dist[0]) + abs(dist[1]) + abs(dist[2]);
+				}
+				else if (mode == 2) // "Chebychev"
+				{
+					float x = abs(dist[0]);
+					float y = abs(dist[1]);
+					float z = abs(dist[2]);
+					d = max(z,max(x,y));
+				}
+				else if (mode == 3)  // "Minkowski 0.5"
+				{
+					d = sqrt(abs(dist[0])) + sqrt(abs(dist[1])) + sqrt(abs(dist[2]));	
+				}
+				else if (mode == 4)  // "Minkowski 4"
+				{
+					float x = dist[0]*dist[0];
+					float y = dist[1]*dist[1];
+					float z = dist[2]*dist[2];				
+					d = sqrt(x*x + y*y + z*z);
+				}
+				// (more distance metrics might be added in the future)
+				// if (mode == X) ...
+				
+
+				// Apply the power to the distance metric, to tweak it
+				d = pow(d, power);
+				
+				// Check if this was the closest one found so far...
+				if (d < closestdist) 
+				{
+					closestpoint = base;
+					closestdist  = d;
+				}
+			}
+		}
+	}
+
+	// Return a value, adjusted a bit to not go negative that often
+	// (it still might, but with this scaling it's rare)	
+	return 1.0 - closestdist / 1.4142;
+}
+
+
+float fbmWorley(point pos, float phase)
+{
+	return 1.0;
+}
+	
+									
+float fbmUperlin(point pos, float phase){
+	float curFreq = 1.0;
+	int Octaves = 5;
+	float curAmp = 1;
+	float fbmnoise = 0;
+	
+	for (int i = 0; i < Octaves; i++)
+	{
+		float noiseSample = noise("uperlin", pos * curFreq, phase + i) * 2;
+		curFreq *= 1.5;
+		curAmp *= 1;
+		
+		fbmnoise += noiseSample * curAmp;
+	}
+	return pow(fbmnoise / Octaves, 6);
+}	
+
+float linearBurn(float top, float bottom)
+{
+	return (top + bottom) - 1;
+}												
+																																									
+shader clouds(
+	string coverage_tex = "",
+	float texScale = 1.0,
+
+	//Stratus
+	float StratusBottom = 0,
+	float StratusTop = 100,
+	float StratusFalloff = 80,
+	//Cumulus
+	float CumulusBottom = 0,
+	float CumulusTop = 300,
+	float CumulusFalloff = 400,
+	
+	//Cumulonumbis
+	float CumulonumbisBottom = 0,
+	float CumulonumbisTop = 700,
+	float CumulonumbisFalloff = 400,
+	
+	float scale = 100,
+	float woverlyScale = 100,
+	float detailScale = 10,
+	
+	output float density = 0,
+)
+{
+	//2d noise for where clouds are
+	point dnoise = point(P[0], P[1], 0.0) / texScale;
+	float coverage = noise("uperlin", dnoise);
+
+	point closestpoint = point(1,1,1);
+	point scaledP = P / scale;
+	point scaledWorleyP = P / woverlyScale;
+	
+	//vertical bands for where vertical thickness of each type of cloud
+	float StratusBand = cloudband(StratusBottom, StratusTop, StratusFalloff);
+	float CumulusBand = cloudband(CumulusBottom, CumulusTop, CumulusFalloff);
+	float CumulonumbisBand = cloudband(CumulonumbisBottom, CumulonumbisTop, CumulonumbisFalloff);
+	
+	
+	
+	//Noises used for modelling cloud shapes
+	float StratusNoise = fbmUperlin(scaledP, 1);
+
+	float worley = WorleyNoise(scaledWorleyP, 1.0, 0, 2, 3, closestpoint);
+	
+	float DetailNoise = noise("uperlin", P / detailScale + worley);
+	
+	
+	
+	density = CumulonumbisBand * smoothstep(0.2, 0.3, coverage);
+	float clouldMulti = remap(worley, DetailNoise, 1.0, 0.0, 1.0);
+	density = density * clouldMulti;
+	//density = linearBurn(density, DetailNoise);
+	//density = StratusBand * WorleyNoise(scaledWorleyP, 1.0, 0, 1, 3, closestpoint);
+	//density = sqrt(density * (WorleyNoise(scaledWorleyP, 1.0, 0, 1, 3, closestpoint)));
+	//density = StratusBand * StratusNoise;
+}

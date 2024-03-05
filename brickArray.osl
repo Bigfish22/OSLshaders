@@ -1,0 +1,8 @@
+shader brickArray(
+    string bricks[5] = {"brick1", "brick2", "brick3", "brick4", "brick5"},
+
+    output color brickWall = 0
+)
+{
+    brickWall = 1;
+}

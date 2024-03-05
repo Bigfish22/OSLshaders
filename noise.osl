@@ -1,0 +1,9 @@
+shader noise(
+	point uv = 0,
+    float scale = 1,
+	output float noiseOut = 0,
+)
+{
+    point uvScaled = uv * scale;
+	noiseOut = noise(uvScaled[0], uvScaled[1]);
+}

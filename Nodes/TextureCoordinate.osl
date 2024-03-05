@@ -1,0 +1,6 @@
+shader TextureCoordinate(
+    output point UV = point(u, v, 0)
+)
+{
+    UV = point(u, v, 0);
+}

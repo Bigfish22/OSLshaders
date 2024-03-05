@@ -1,0 +1,91 @@
+
+//cg / hlsl frac
+float frac(float x)
+{
+	return x - floor(x);
+}
+vector frac(vector x)
+{
+	return vector(frac(x[0]), frac(x[1]), frac(x[2]));
+}
+color frac(color x)
+{
+	return color(frac(x[0]), frac(x[1]), frac(x[2]));
+}
+point frac(point x)
+{
+	return point(frac(x[0]), frac(x[1]), frac(x[2]));
+}
+
+//cg / hlsl saturate
+float saturate(float x)
+{
+    return max(0, min(1, x));
+}
+vector saturate(vector x)
+{
+    return vector(max(0, min(1, x[0])), max(0, min(1, x[1])), max(0, min(1, x[2])));
+}
+color saturate(color x)
+{
+    return color(max(0, min(1, x[0])), max(0, min(1, x[1])), max(0, min(1, x[2])));
+}
+point saturate(point x)
+{
+    return point(max(0, min(1, x[0])), max(0, min(1, x[1])), max(0, min(1, x[2])));
+}
+
+shader cobblestonePath(
+    float tilingX = 20,
+    float tilingY = 20,
+
+    color ColTop = 1,
+    color ColGrout = 0.5,
+    color ColEdge = 0.2,
+    float colorShiftAmount = 1,
+
+    float roughnessTop = 0.3,
+    float roughnessGrout = 0.6,
+
+    float slopePower = 1,
+    float hiOffsetmulti = 0,
+    float hiOffsetmultiB = 0,
+    float noiseStr = 1,
+    float noiseScale = 1,
+    output color oDebug = 0,
+    output color oHeightCheck = 0,
+    output color oDiffuse = 0,
+    output color oRoughness = 0
+)
+{   
+    float edgeMask = saturate(((1-u)*2)*(u*2));
+    float randomNoise = (pnoise(P * noiseScale, point(2,2,2)))-0.5;
+    float x = u * tilingX + (randomNoise * noiseStr * edgeMask);
+    float y = v * tilingY + (randomNoise * noiseStr * edgeMask);
+    float xID = floor(x);
+    float yID = floor(y);
+    x = frac(x);
+    y = frac(y);
+    
+    float diffuseVar = pnoise(P*0.0544, point(10,10,10))-0.5;
+    color colorTop = ColTop + diffuseVar * colorShiftAmount;
+    
+
+    float randomHeight = noise(xID*hiOffsetmulti, yID*hiOffsetmulti);
+    float randomHeightB = noise(xID*hiOffsetmultiB+8473, yID*hiOffsetmultiB+42);
+
+    color square = smoothstep(0.01, 0.15, x) * (1-smoothstep(0.85, 0.99, x)) *
+                smoothstep(0.01, 0.15, y) * (1-smoothstep(0.85, 0.99, y));
+
+    color slope = normalize(rotate(point(x,y,0), randomHeight*5, vector(0,0,1)));
+    float slopeX = (slope[0]+1)*0.5;
+    slopeX = slopeX * saturate(square[0]);
+    slopeX = mix(-0.5, 0.5, slopeX)*slopePower;
+
+    
+
+    oDebug = (saturate(square) * (randomHeight * 4)+slopeX)*edgeMask*0.5;
+    oHeightCheck = slopeX;
+    oDiffuse = mix(mix(ColGrout, colorTop, saturate(square)), ColEdge, 1-edgeMask);
+    oRoughness = mix(roughnessGrout, roughnessTop, saturate(square)*edgeMask);
+}

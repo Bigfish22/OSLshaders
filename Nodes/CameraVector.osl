@@ -1,0 +1,4 @@
+shader CameraVector(
+    output vector CameraVector = I,
+)
+{}

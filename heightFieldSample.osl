@@ -1,0 +1,42 @@
+shader heightFieldSample(
+    float fallOff = 100,
+    float falloffPwr = 1,
+    float heightScale = 1,
+    point firstCorner = point(0,0,0),
+    point secondCorner = point(0,0,0),
+    string heightField = "Height" [[string widget = "filename"]],
+    int flipX = 0 [[string widget = "checkBox"]],
+    int flipY = 0 [[string widget = "checkBox"]],
+    int flipHeight = 0 [[string widget = "checkBox"]],
+
+    output float mask = 0,
+)
+{
+    float Xcoord = distance(point(firstCorner[0],0,0), point(P[0], 0, 0)) / distance(firstCorner, point(secondCorner[0], 0, 0));
+    float Ycoord = distance(point(firstCorner[1],0,0), point(P[1], 0, 0)) / distance(firstCorner, point(secondCorner[1], 0, 0));
+
+    // to account for whatever uvs you baked with
+    if(flipX)
+    {
+        Xcoord = 1-Xcoord;
+    }
+    if(flipY)
+    {
+        Ycoord = 1-Ycoord;
+    }
+
+    point XY = point(Xcoord, Ycoord, 0);
+
+    float height = texture(heightField, XY[0], XY[1]) * heightScale;
+
+    //cause up is flipped in max in redshift
+    if(flipHeight)
+    {
+        mask = 1-clamp(distance(point(height, 0, 0), point(1-P[2],0,0)) / fallOff, 0, 1);
+    }
+    else
+    {
+        mask = 1-clamp(distance(point(height, 0, 0), point(P[2],0,0)) / fallOff, 0, 1);
+    }
+    mask = pow(mask, falloffPwr);
+}

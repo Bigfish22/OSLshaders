@@ -1,0 +1,7 @@
+shader OneMinusX(
+    vector X = 0,
+    output vector oX = 0,
+)
+{
+    oX = 1-X;
+}

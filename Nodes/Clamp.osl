@@ -1,0 +1,9 @@
+shader Clamp(
+    vector X = 0,
+    float minV = 0,
+    float maxV = 1,
+    output vector oX = 0,
+)
+{
+    oX = clamp(X, minV, maxV);
+}

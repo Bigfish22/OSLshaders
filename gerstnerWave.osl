@@ -1,0 +1,36 @@
+// https://catlikecoding.com/unity/tutorials/flow/waves/
+shader gerstnerWave(
+    float steepness = 0.5,
+    float waveLength = 10,
+    vector direction = vector(1,0,0),
+    //int frame = 0,
+    float framerate = 24,
+
+    output vector outDisp = 0,
+    output normal outNorm = 0
+)
+{
+    float t = time / framerate;
+    //float t = frame / framerate;
+    float k = 2 * M_PI / waveLength;
+    float c = sqrt(9.8 / k);
+    vector d = normalize(direction);
+    vector PVec2 = vector(P[0], P[1], 0);
+    float f = k * (dot(d, PVec2) - c * t);
+    float a = steepness / k;
+    float waveX = d[0] * (a * cos(f));
+    float waveY = d[1] * (a * cos(f));
+    float waveZ = a * sin(f);
+
+    vector tangent = vector(1-d.x * d.x * (steepness * sin(f)), d.x * (steepness * cos(f)), -d.x * d.y * (steepness * sin(f)));
+
+    vector binormal = vector(-d.x * d.y * ( steepness * sin(f)), d.y * (steepness * cos(f)), 1 - d.y * d.y * (steepness * sin(f)));
+
+
+    outDisp = vector(waveX, waveY, waveZ);
+
+    outNorm = normalize(cross(binormal, tangent));
+
+    outNorm = normal(outNorm.x, outNorm.y, outNorm.z);
+
+}

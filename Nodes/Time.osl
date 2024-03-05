@@ -1,0 +1,7 @@
+shader Time(
+    float framerate = 24,
+    output float Time = 0,
+)
+{
+    Time = time / 24;
+}

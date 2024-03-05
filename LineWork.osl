@@ -1,0 +1,50 @@
+shader lineWork(
+    float thickness = 2.0,
+    float tracedist = 100.0,
+    float threshold = 2.0,
+    point bias = point(0.0, 0.0, -10.0),
+    output color line = 1
+)
+{
+    point points[8] = {point(-1.0, 1.0, 0.0),
+                     point(-2.0, 0.0, 0.0), 
+                     point(-1.0, -1.0, 0.0),
+                     point(0.0, 1.0, 0),
+                     point(0.0, -1.0, 0), 
+                     point(1.0, 1.0, 0.0), 
+                     point(2.0, 0.0, 0.0), 
+                     point(1.0, -1.0, 0.0)};
+
+    point finalPoints[8];
+
+    point mainP = transform("world", "camera", P);
+    
+    for (int i = 0; i < 8; i++)
+    {
+        finalPoints[i] = transform("camera", "world", ( mainP + (points[i] * thickness + bias)));
+    }
+
+    vector rayDir = normalize(I) * vector(-1.0, -1.0, -1.0);
+    
+    float traceXA = trace(finalPoints[0], rayDir, "maxdist", tracedist);
+    float traceXB = trace(finalPoints[1], rayDir, "maxdist", tracedist);
+    float traceXC = trace(finalPoints[2], rayDir, "maxdist", tracedist);
+
+    float traceTop = trace(finalPoints[3], rayDir, "maxdist", tracedist);
+    float tracebottom = trace(finalPoints[4], rayDir, "maxdist", tracedist);
+
+    float traceYA = trace(finalPoints[5], rayDir, "maxdist", tracedist);
+    float traceYB = trace(finalPoints[6], rayDir, "maxdist", tracedist);
+    float traceYC = trace(finalPoints[7], rayDir, "maxdist", tracedist);
+
+    float sobelX = traceXA + (2 * traceXB) + traceXC - traceYA - (2 * traceYB) - traceYC;
+    float sobelY = -traceXA - (2 * traceTop) - traceXC + traceYA + (2 * tracebottom) + traceYC;
+    if (sqrt((sobelX * sobelX) +(sobelY * sobelY)) > threshold)
+    {
+        line = 1;
+    }
+    else
+    {
+        line = 0;
+    }
+}

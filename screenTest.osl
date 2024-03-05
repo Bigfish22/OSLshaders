@@ -1,0 +1,11 @@
+shader screenTest(
+    output point start = 0,
+    output point screenspace = 0,
+    output point worldOut = 0
+)
+{
+    start = P;
+    screenspace = transform("world", "screen", P);
+    point screenA = transform("world", "screen", P);
+    worldOut =transform("screen", "world", screenA);
+}

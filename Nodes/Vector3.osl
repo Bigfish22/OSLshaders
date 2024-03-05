@@ -1,0 +1,12 @@
+shader Vector3(
+    vector Vector3 = 0,
+    output vector oVector3 = Vector3,
+    output float R = 0,
+    output float G = 0,
+    output float B = 0,
+)
+{   
+    R = Vector3[0];
+    G = Vector3[1];
+    B = Vector3[2]; 
+}

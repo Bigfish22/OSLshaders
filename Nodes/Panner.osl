@@ -1,0 +1,15 @@
+shader Panner
+[[string label = "Panner"]]
+(
+    vector UV = vector(u, v, 0),
+    float Time = time,
+    float speedX = 0,
+    float speedY = 0,
+
+    output vector oUV = 0,
+)
+{   
+    vector Speed = vector(speedX * Time, speedY * Time, 0);
+
+    oUV = UV + Speed;
+}

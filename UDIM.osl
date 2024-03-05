@@ -1,0 +1,33 @@
+color TextureSample(string FileName, point UV, int UDIM, int sRGB)
+{
+    float ulookup = UV.x;
+	float vlookup = 1.0 - UV.y;
+    if (UDIM)
+	{
+		float vfloor  = floor(UV.y);
+		float vfrac   = UV.y - vfloor;
+		vlookup = vfloor + (1.0 - vfrac);
+	}
+    color sample = texture(FileName, ulookup, vlookup);
+    if(sRGB)
+    {
+        return pow(sample, 2.2);
+    }
+    else
+    {
+        return sample;
+    }
+}
+
+shader UDIMLoader(
+    string diffuseMap = "bob",
+    point UVoffsets = point(1,1,0) [[string label="TileU TileV Rotation"]],
+    int UDIM = 0 [[ string widget="checkBox" ]],
+    int sRGB = 0 [[ string widget="checkBox" ]],
+    output color colorOut = 0
+)
+{
+    point UV = point(u * UVoffsets.x, v * UVoffsets.y, 0);
+    UV = rotate(UV, UVoffsets.z, vector(0,0,1));
+    colorOut = TextureSample(diffuseMap, UV, UDIM, sRGB);
+}

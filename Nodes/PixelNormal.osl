@@ -1,0 +1,4 @@
+shader PixelNormal(
+    output vector Normal = N,
+)
+{}

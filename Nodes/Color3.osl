@@ -1,0 +1,13 @@
+shader Color3(
+    color Color = color(1, 1, 1),
+    output color oColor = 0,
+    output float R = 0,
+    output float G = 0,
+    output float B = 0,
+)
+{
+    oColor = Color;
+    R = Color[0];
+    G = Color[0];
+    B = Color[0];
+}

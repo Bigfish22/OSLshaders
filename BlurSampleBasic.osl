@@ -1,0 +1,20 @@
+shader inputTexBlur 
+(
+    string file = "" [[string widget = "filename"]],
+    float blurSize = 0.5,
+    int imageRes = 512,
+    int sampleCount = 10,
+    output color cout = 0
+)
+{
+    for (int i = -sampleCount; i < sampleCount; ++i)
+    {
+        float loopOffset = 1-(abs(i) / sampleCount);
+        loopOffset = blurSize + loopOffset;
+
+        color SampleX = texture(file, u + loopOffset, 1-v);
+        //color SampleY = texture(file, u, 1-v + OffsetAmount);
+
+        cout += ((SampleX) / 1) / (sampleCount * 2);
+    }
+}

@@ -1,0 +1,12 @@
+shader featherSample(
+    float U = 0,
+    float V = 0,
+    string texturePath = "" [[string widget = "filename"]],
+
+    output color outColor = 0,
+    output color outUV = 0,
+)
+{
+    outColor = texture(texturePath, U, V);
+    outUV = vector(U, V, 0);
+}

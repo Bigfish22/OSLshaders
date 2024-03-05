@@ -1,0 +1,5 @@
+shader AbsoluteWorldPosition(
+    output point WorldPosition = P,
+)
+{
+}

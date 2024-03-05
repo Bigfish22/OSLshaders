@@ -1,0 +1,11 @@
+shader swordGlow(
+    color input = color(1,0,0),
+    float mask = 1,
+    float overdrive = 100,
+    output closure color cout = 0,
+)
+{
+    closure color glow = emission() * input * mask * overdrive;
+
+    cout = transparent() + glow;
+}

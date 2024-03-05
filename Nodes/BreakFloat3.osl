@@ -1,0 +1,12 @@
+shader BreakFloat3(
+    vector In = 0,
+
+    output float R = 0,
+    output float G = 0,
+    output float B = 0,
+)
+{
+    R = In[0];
+    G = In[1];
+    B = In[2];
+}

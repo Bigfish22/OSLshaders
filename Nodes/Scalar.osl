@@ -1,0 +1,6 @@
+shader Scalar(
+    float Scalar = 0,
+    output float oScalar = Scalar,
+)
+{   
+}

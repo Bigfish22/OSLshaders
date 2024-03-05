@@ -1,0 +1,79 @@
+//stepped gradient shader by Benjamin Mikhaiel
+float frac(float x)
+{
+	return x - floor(x);
+}
+
+shader steppedGradient(
+    float positionInput = 0.5,
+
+    color knot0 = 0.0,
+    color knot1 = 0.1,
+    color knot2 = 0.2,
+    color knot3 = 0.3,
+    color knot4 = 0.4,
+    color knot5 = 0.5,
+    color knot6 = 0.6,
+    color knot7 = 0.7,
+    color knot8 = 0.8,
+    color knot9 = 0.9,
+
+    float knotpos0 = 0.1,
+    float knotpos1 = 0.2,
+    float knotpos2 = 0.3,
+    float knotpos3 = 0.4,
+    float knotpos4 = 0.5,
+    float knotpos5 = 0.6,
+    float knotpos6 = 0.7,
+    float knotpos7 = 0.8,
+    float knotpos8 = 0.9,
+    float knotpos9 = 1.001,
+
+    output color outColor = 0
+)
+{
+    //could also just clamp it, but i think tiling is the usual thing a gradient does?
+    float position = frac(positionInput);
+
+    //there was probably a better way to do this but eh.
+    if (position < knotpos0)
+    {
+        outColor = knot0;
+    }
+    else if (position < knotpos1)
+    {
+        outColor = knot1;
+    }
+    else if (position < knotpos2)
+    {
+        outColor = knot2;       
+    }
+    else if (position < knotpos3)
+    {
+        outColor = knot3;        
+    }
+    else if (position < knotpos4)
+    {
+        outColor = knot4;        
+    }
+    else if (position < knotpos5)
+    {
+        outColor = knot5;        
+    }
+    else if (position < knotpos6)
+    {
+        outColor = knot6;        
+    }
+    else if (position < knotpos7)
+    {
+        outColor = knot7;        
+    }
+    else if (position < knotpos8)
+    {
+        outColor = knot8;        
+    }
+    else if (position <= knotpos9)
+    {
+        outColor = knot9;        
+    }
+}

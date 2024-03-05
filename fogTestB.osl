@@ -1,0 +1,40 @@
+float frac(float x)
+{
+	return x - floor(x);
+}
+vector frac(vector x)
+{
+	return vector(frac(x[0]), frac(x[1]), frac(x[2]));
+}
+
+
+shader fogTestB(
+    float scale = 1,
+    float noiseScale = 0.01,
+    float distortAmount = 100,
+    point offset = 0,
+
+    output color cout = 0,
+)
+{
+    color x = 0;
+    color y = 0;
+
+    
+    //vector position = frac(P * scale);
+
+    vector position = ((P + offset) * scale) + (noise(P*noiseScale)*distortAmount);
+
+
+    if(position[2] > 0.25 & position[2] < 0.65)
+    {
+        x = 1;
+    }
+    if(position[1] > 0.25 & position[1] < 0.65)
+    {
+        y = 1;
+    }
+
+    cout = y * x;
+
+}

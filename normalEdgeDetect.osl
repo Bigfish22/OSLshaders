@@ -1,0 +1,9 @@
+shader normalEdgeDetect(
+    output vector edges = 0
+)
+{
+    vector hitNormal;
+    int hit = trace(P, N);
+    getmessage("trace", "N", hitNormal);
+    edges = (hitNormal / 2) + 0.5;
+}

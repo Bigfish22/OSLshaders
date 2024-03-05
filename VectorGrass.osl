@@ -1,0 +1,16 @@
+shader VectorDisplaceGrass(
+    float speed = 5,
+    float strength = 1,
+    float timeInput = time,
+    vector forestColourUVW = 0,
+    output vector grassOffset = vector(1, 1, 1),
+    output vector example = P
+)
+{
+    float timeValue = time / 24.0;
+    timeValue += forestColourUVW[1];
+    float offset = (sin(timeValue * speed) * strength) * pow(v, 3);
+    grassOffset += vector(0, offset, - abs(offset));
+    grassOffset = transform("object", "world", grassOffset);
+    example = P[0] / 100;
+}

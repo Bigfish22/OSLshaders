@@ -1,0 +1,7 @@
+shader NormalSpaceToOutput(
+    vector Normal = 0,
+    output vector oNormal = 0,
+)
+{
+    oNormal = vector(Normal[0]*0.5+1, Normal[1]*0.5+1, Normal[2]);
+}

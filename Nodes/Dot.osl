@@ -1,0 +1,8 @@
+shader Dot(
+    vector A = 0,
+    vector B = 0,
+    output float X = 0
+)
+{
+    X = dot(A,B);
+}

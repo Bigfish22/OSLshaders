@@ -1,0 +1,16 @@
+float frac(float x)
+{
+	return x - floor(x);
+}
+vector frac(vector x)
+{
+	return vector(frac(x[0]), frac(x[1]), frac(x[2]));
+}
+
+shader Frac(
+    vector X = 0,
+    output vector oX = 0,
+)
+{
+    oX = frac(X);
+}

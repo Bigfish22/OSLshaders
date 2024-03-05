@@ -1,0 +1,24 @@
+color blurSample(float offset, string file)
+{
+    float randomOffset = ((noise(P*10000) * 9993932.0229) / 9793932.0229) - 0.5;
+    randomOffset = randomOffset * offset;
+    color SampleX = texture(file, u + randomOffset, 1-v);
+    color SampleY = texture(file, u, 1-v + randomOffset);
+    return (SampleX + SampleY) / 2;
+}
+
+shader inputTexBlur 
+(
+    string file = "" [[string widget = "filename"]],
+    float blurSize = 0.5,
+    int sampleCount = 10,
+    output color cout = 0
+)
+{
+    int i = 0;
+    while (i < sampleCount)
+    {
+        i++;
+        cout += blurSample(blurSize, file) / sampleCount;
+    }
+}

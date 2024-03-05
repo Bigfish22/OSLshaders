@@ -1,0 +1,7 @@
+shader Fresnel(
+    float Exponent = 1,
+    output float A = 0
+)
+{
+    A = pow(1 - max(dot(N, -I),0),Exponent);
+}

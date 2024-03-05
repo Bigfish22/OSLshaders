@@ -1,0 +1,7 @@
+shader Cos(
+    vector X = 0,
+    output vector oX = 0,
+)
+{
+    oX = cos(X);
+}

@@ -1,0 +1,10 @@
+shader makeFloat3(
+    float R = 0,
+    float G = 0,
+    float B = 0,
+    
+    output vector RGB = 0
+)
+{
+    RGB = vector(R, G, B);
+}

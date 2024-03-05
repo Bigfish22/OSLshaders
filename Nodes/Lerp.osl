@@ -1,0 +1,9 @@
+shader Lerp(
+    vector A = 0, 
+    vector B = 0,
+    float Alpha = 0,
+    output vector X = 0
+)
+{
+    X = mix(A, B, Alpha);
+}

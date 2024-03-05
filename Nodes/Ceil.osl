@@ -1,0 +1,7 @@
+shader Ceil(
+    vector X = 0,
+    output vector oX = 0
+)
+{
+    oX = ceil(X);
+}

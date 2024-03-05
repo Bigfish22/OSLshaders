@@ -1,0 +1,29 @@
+struct patch
+{
+    point A;
+    point B;
+    point C;
+    point D;
+    point E;
+    point J;
+};
+
+void structCrazyNess(patch inPatch)
+{
+    point inArray[6] = {inPatch.A, inPatch.B, inPatch.C, inPatch.D, inPatch.E, inPatch.J}
+}
+
+void test(output float bob[5])
+{
+    bob[4] += 10.0;
+}
+
+shader referenceParam(
+    float a = 0,
+    output float cout = 0
+)
+{
+    float b[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
+    test(b);
+    cout = b[4];
+}

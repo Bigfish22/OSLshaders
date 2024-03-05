@@ -1,0 +1,9 @@
+shader Add(
+    vector A = 0,
+    vector B = 0,
+
+    output vector X = 0
+)
+{
+    X = A + B;
+}

@@ -1,0 +1,9 @@
+shader mess(
+    output float test = 0
+)
+{
+    float tracyBoi = trace(P, N);
+    float dist; 
+    getmessage("trace", "hitdist", dist);
+    test = dist;
+}
