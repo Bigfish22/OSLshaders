@@ -1,0 +1,70 @@
+#include "vector4.h"
+
+#define MAX_STEPS 40
+
+float fbm(vector p) {
+  vector q = p * 0.3 * vector(1.0, -1, -1.0);
+  float g = noise(q);
+
+  float f = 0.0;
+  float scale = 0.5;
+  float factor = 2.02;
+
+  for (int i = 0; i < 6; i++) {
+      f += scale * noise(q);
+      q *= factor;
+      factor += 0.21;
+      scale *= 0.5;
+  }
+
+  return f;
+}
+
+float sdSphere(vector p, float radius)
+{
+    return length(p) - (radius * fbm(p));
+    //return length(p) - radius;
+}
+
+float scene(vector p)
+{
+    float dist = sdSphere(p, 20);
+    return -dist;
+}
+
+float raymarch(vector rayDirection, vector rayOrigin, output float alpha)
+{
+    float depth = 0.0;
+    vector sunDirection = vector(0,0.5,1);
+    float diffuse = 0;
+
+    vector p = rayOrigin + depth * rayDirection;
+    float res = 0;
+    for (int i = 0; i < MAX_STEPS; i++)
+    {
+        float density = scene(p);
+        if (density > 0.0)
+        {
+            diffuse = clamp((scene(p) - scene(p + 1 * sunDirection)) / 0.3, 0.0, 1.0 );
+            res += 0.05;
+
+        }
+        alpha = res;
+        depth += 1;
+        p = rayOrigin + depth * rayDirection;
+    }
+    return diffuse;
+}
+
+shader RayMarch(
+    color lightCol = 1,
+    color shadowCol = 0,
+    output color outColor = 0,
+    output float alpha = 0
+)
+{
+    vector uv = vector(u, v, 0);
+    uv = uv - 0.5;
+    outColor = raymarch(I, P, alpha);
+    outColor = mix(lightCol, shadowCol, outColor);
+}
